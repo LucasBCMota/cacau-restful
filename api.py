@@ -32,7 +32,7 @@ states = [
 				'motor2': '-2 lowest_position',
 				'motor3': '-3 lowest_position',
 				'motor4': '-4 lowest_position'
-			}
+			},
 			'nano2': {
 				'motor1': '-1 lowest_position',
 				'motor2': '-2 lowest_position',
