@@ -1,18 +1,18 @@
-from flask import Flask, jsonify, make_response, request
+from flask import Flask, jsonify, make_response, request, url_for
 
 app = Flask(__name__)
 
 states = [
 	{
 		'id': 1,
-		'title': u'AB',
-		'description': u'Sobe ate limite',
+		'title': u'Start',
+		'description': u'Everything stopped',
 		'command': 1
 	},
 	{
 		'id': 2,
 		'title': u'BA',
-		'description': u'Desce e sobe',
+		'description': u'Up and down all the way',
 		'command': 2
 	}
 ]
@@ -23,7 +23,7 @@ def index():
 
 @app.route('/cacau/api/v1.0/states', methods=['GET'])
 def get_states():
-	return jsonify({'states': states})
+	return jsonify({'states': [make_public_state(state) for state in states]})
 
 @app.route('/cacau/api/v1.0/states/<int:state_id>', methods=['GET'])
 def get_state(state_id):
@@ -74,6 +74,16 @@ def delete_state(state_id):
 @app.errorhandler(404)
 def not_found(error):
 	return make_response(jsonify({'error': 'Not found'}), 404)
+
+def make_public_state(state):
+	new_state = {}
+	for field in state:
+		if field =='id':
+			new_state['uri'] = url_for('get_state', state_id=state['id'], _external=True)
+		else:
+			new_state[field] = state[field]
+
+	return new_state
 
 if __name__ == '__main__':
 	app.run(debug=True)
