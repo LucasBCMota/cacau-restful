@@ -5,15 +5,41 @@ app = Flask(__name__)
 states = [
 	{
 		'id': 1,
-		'title': u'Start',
-		'description': u'Everything stopped',
-		'command': 1
+		'title': u'StartTop',
+		'description': u'All wires to highest position',
+		'commands': {
+			'nano1': {
+				'motor1': '1 highest_position',
+				'motor2': '2 highest_position',
+				'motor3': '3 highest_position',
+				'motor4': '4 highest_position'
+			}
+			'nano2': {
+				'motor1': '1 highest_position',
+				'motor2': '2 highest_position',
+				'motor3': '3 highest_position',
+				'motor4': '4 highest_position'
+			}
+		}
 	},
 	{
 		'id': 2,
-		'title': u'BA',
-		'description': u'Up and down all the way',
-		'command': 2
+		'title': u'StartBottom',
+		'description': u'All wires to lowest position',
+		'commands': {
+			'nano1': {
+				'motor1': '-1 lowest_position',
+				'motor2': '-2 lowest_position',
+				'motor3': '-3 lowest_position',
+				'motor4': '-4 lowest_position'
+			}
+			'nano2': {
+				'motor1': '-1 lowest_position',
+				'motor2': '-2 lowest_position',
+				'motor3': '-3 lowest_position',
+				'motor4': '-4 lowest_position'
+			}
+		}
 	}
 ]
 
@@ -38,7 +64,7 @@ def create_state():
 		'id': states[-1]['id'] + 1,
 		'title': request.json.get('title', "Untitled"),
 		'description': request.json.get('description', ""),
-		'command': request.json['command']
+		'commands': request.json['commands']
 	}
 	states.append(state)
 	return jsonify({'state': state}), 201
@@ -52,13 +78,13 @@ def update_state(state_id):
 		abort(400)
 	if 'title' in request.json and type(request.json['title']) is not unicode:
 		abort(400)
-	if 'command' in request.json and type(request.json['command']) is not unicode:
+	if 'commands' in request.json and type(request.json['commands']) is not unicode:
 		abort(400)
 	if 'description' in request.json and type(request.json['description']) is not unicode:
 		abort(400)
 	state['title'] = request.json.get('title', state['title'])
 	state['description'] = request.json.get('description', state['description'])
-	state['command'] = request.json.get('command', state['command'])
+	state['commands'] = request.json.get('commands', state['commands'])
 	return jsonify({'state': state})
 
 @app.route('/cacau/api/v1.0/states/<int:state_id>', methods=['DELETE'])
@@ -83,8 +109,8 @@ def update_actual_state():
 		abort(400)
 	if 'id' in request.json and request.json['id'] <= states[-1]['id']:
 		actual_state_id = request.json['id']
-	elif 'command' in request.json:
-		actual_state_id = [state for state in states if state['command'] == request.json['command']][0]['id']
+	elif 'commands' in request.json:
+		actual_state_id = [state for state in states if state['commands'] == request.json['commands']][0]['id']
 	elif 'title' in request.json:
 		actual_state_id = [state for state in states if state['title'] == request.json['title']][0]['id']
 	else:
