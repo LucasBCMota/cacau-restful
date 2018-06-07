@@ -19,10 +19,6 @@ states = [
 
 actual_state_id = 1
 
-@app.route('/')
-def index():
-	return "Hello World!"
-
 @app.route('/cacau/api/v1.0/states', methods=['GET'])
 def get_states():
 	return jsonify({'states': [make_public_state(state) for state in states]})
@@ -85,7 +81,7 @@ def update_actual_state():
 	global actual_state_id
 	if not request.json:
 		abort(400)
-	if 'id' in request.json:
+	if 'id' in request.json and request.json['id'] <= states[-1]['id']:
 		actual_state_id = request.json['id']
 	elif 'command' in request.json:
 		actual_state_id = [state for state in states if state['command'] == request.json['command']][0]['id']
@@ -93,12 +89,17 @@ def update_actual_state():
 		actual_state_id = [state for state in states if state['title'] == request.json['title']][0]['id']
 	else:
 		abort(400)
-
+	if actual_state_id < 1:
+		actual_state_id = 1
 	return get_state(actual_state_id)
 
 @app.errorhandler(404)
 def not_found(error):
 	return make_response(jsonify({'error': 'Not found'}), 404)
+
+@app.errorhandler(400)
+def bad_request(error):
+	return make_response(jsonify({'error': 'Bad request'}), 400)
 
 def make_public_state(state):
 	new_state = {}
