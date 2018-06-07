@@ -17,6 +17,8 @@ states = [
 	}
 ]
 
+actual_state_id = 1
+
 @app.route('/')
 def index():
 	return "Hello World!"
@@ -70,6 +72,29 @@ def delete_state(state_id):
 		abort(404)
 	states.remove(state)
 	return jsonify({'result': True})
+
+@app.route('/cacau/api/v1.0/state', methods=['GET'])
+def get_actual_state():
+	state = [state for state in states if state['id'] == actual_state_id][0]
+	if len(state) == 0:
+		abort(404)
+	return jsonify({'state': make_public_state(state)})
+
+@app.route('/cacau/api/v1.0/state', methods=['POST'])
+def update_actual_state():
+	global actual_state_id
+	if not request.json:
+		abort(400)
+	if 'id' in request.json:
+		actual_state_id = request.json['id']
+	elif 'command' in request.json:
+		actual_state_id = [state for state in states if state['command'] == request.json['command']][0]['id']
+	elif 'title' in request.json:
+		actual_state_id = [state for state in states if state['title'] == request.json['title']][0]['id']
+	else:
+		abort(400)
+
+	return get_state(actual_state_id)
 
 @app.errorhandler(404)
 def not_found(error):
