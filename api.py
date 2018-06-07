@@ -13,7 +13,7 @@ states = [
 				'motor2': '2 highest_position',
 				'motor3': '3 highest_position',
 				'motor4': '4 highest_position'
-			}
+			},
 			'nano2': {
 				'motor1': '1 highest_position',
 				'motor2': '2 highest_position',
