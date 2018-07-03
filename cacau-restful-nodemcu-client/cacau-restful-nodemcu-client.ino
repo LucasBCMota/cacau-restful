@@ -5,12 +5,13 @@
 
 const char* ssid = "Sbornia...";
 const char* password = "lauravadia";
-SoftwareSerial mySerial(13, 15);
+SoftwareSerial serialMega(13, 15);
 
 int actual_id;
+bool debug = true;
 void setup () {
-  
   Serial.begin(115200);
+  serialMega.begin(115200);
   WiFi.begin(ssid, password);
  
   while (WiFi.status() != WL_CONNECTED) {
@@ -49,14 +50,24 @@ void loop() {
       const char* commands_nano2_motor4 = commands_nano2["motor4"];
       if(id != actual_id){
         actual_id = id;
-        Serial.print(commands_nano1_motor1);
-        Serial.print(commands_nano1_motor2);
-        Serial.print(commands_nano1_motor3);
-        Serial.print(commands_nano1_motor4);
-        Serial.print(commands_nano2_motor1);
-        Serial.print(commands_nano2_motor2);
-        Serial.print(commands_nano2_motor3);
-        Serial.print(commands_nano2_motor4);
+        if(debug){
+          Serial.print(commands_nano1_motor1);
+          Serial.print(commands_nano1_motor2);
+          Serial.print(commands_nano1_motor3);
+          Serial.print(commands_nano1_motor4);
+          Serial.print(commands_nano2_motor1);
+          Serial.print(commands_nano2_motor2);
+          Serial.print(commands_nano2_motor3);
+          Serial.print(commands_nano2_motor4);
+        }
+        serialMega.print(commands_nano1_motor1);
+        serialMega.print(commands_nano1_motor2);
+        serialMega.print(commands_nano1_motor3);
+        serialMega.print(commands_nano1_motor4);
+        serialMega.print(commands_nano2_motor1);
+        serialMega.print(commands_nano2_motor2);
+        serialMega.print(commands_nano2_motor3);
+        serialMega.print(commands_nano2_motor4);
       }
     }
     http.end();
