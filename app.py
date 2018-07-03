@@ -132,11 +132,10 @@ def make_public_state(state):
 	for field in state:
 		if field =='id':
 			new_state['uri'] = url_for('get_state', state_id=state['id'], _external=True)
-			new_state[field] = state[field]
 		else:
 			new_state[field] = state[field]
 
 	return new_state
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0')
+	app.run(debug=True)
